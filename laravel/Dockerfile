@@ -1,0 +1,56 @@
+FROM php:8.1-fpm
+
+# Copy composer.lock and composer.json
+COPY composer.lock composer.json /var/www/
+
+# Set working directory
+WORKDIR /var/www
+
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libonig-dev \
+    libzip-dev \
+    libpng-dev \
+    libwebp-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
+    locales \
+    zip \
+    jpegoptim optipng pngquant gifsicle \
+    vim \
+    unzip \
+    git \
+    curl
+
+# Clear cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install extensions
+RUN docker-php-ext-install pdo_mysql mbstring zip exif pcntl
+RUN docker-php-ext-configure gd  --with-freetype=/usr/include/ --enable-gd --with-jpeg --with-webp
+RUN docker-php-ext-install gd
+
+# Install composer
+RUN curl -sS http://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Add user for laravel application
+RUN groupadd -g 1000 www
+RUN useradd -u 1000 -ms /bin/bash -g www www
+
+# Copy existing application directory contents
+COPY . /var/www
+COPY /php/local.ini /usr/local/etc/php/conf.d/local.ini
+# Copy existing application directory permissions
+COPY --chown=www:www . /var/www
+RUN chown -R www:www /var/www
+# Change current user to www
+USER www
+
+#
+#RUN touch /var/www/storage/logs/laravel.log
+#RUN chmod 777 /var/www/storage/
+#RUN chown -R www:www /var/www/storage
+# Expose port 9000 and start php-fpm server
+EXPOSE 9000
+CMD ["php-fpm"]

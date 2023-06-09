@@ -1,0 +1,91 @@
+kind: StatefulSet 
+apiVersion: apps/v1 
+metadata: 
+  name: mysql-statefulset
+  labels:
+    app: mysql 
+spec: 
+  selector: 
+    matchLabels:
+      app: mysql 
+  serviceName: mysql-service
+  template: 
+    metadata: 
+      labels: 
+        app: mysql 
+    spec:
+      containers: 
+        - name: mysql 
+          image: harbor.docker.com/app/mysql:0.1
+          args:
+           - "--ignore-db-dir=lost+found"
+          env: 
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+               name: mysql-secret
+               key: MYSQL_ROOT_PASSWORD
+          - name: MYSQL_DATABASE
+            valueFrom:
+              secretKeyRef:
+               name: mysql-secret
+               key: MYSQL_DATABASE
+          - name: MYSQL_USER
+            valueFrom:
+              secretKeyRef:
+               name: mysql-secret
+               key: MYSQL_USER
+          - name: MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+               name: mysql-secret
+               key: MYSQL_PASSWORD
+          - name: SERVICE_TAGS
+            valueFrom:
+              secretKeyRef:
+               name: mysql-secret
+               key: SERVICE_TAGS
+          - name: SERVICE_NAME
+            valueFrom:
+              secretKeyRef:
+               name: mysql-secret
+               key: SERVICE_NAME
+
+          ports: 
+            - containerPort: 3306 
+          volumeMounts: 
+            - mountPath: /var/lib/mysql
+              name: mysql-storage
+      imagePullSecrets:
+            - name: harbor-registry
+      volumes:
+        - name: mysql-storage
+          persistentVolumeClaim: 
+            claimName: mysql-persistentvolumeclaim
+---
+kind: PersistentVolumeClaim 
+apiVersion: v1 
+metadata: 
+  name: mysql-persistentvolumeclaim 
+  labels: 
+    app: mysql
+spec: 
+  accessModes: 
+    - ReadWriteOnce
+  resources: 
+    requests: 
+      storage: 1Gi 
+---
+kind: Service 
+apiVersion: v1 
+metadata: 
+  name: mysql-service 
+  labels: 
+    app: mysql
+spec: 
+  selector: 
+    app: mysql 
+  ports: 
+    - port: 3306 
+      targetPort: 3306 
+
