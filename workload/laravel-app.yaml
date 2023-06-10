@@ -18,7 +18,12 @@ metadata:
   labels:
     app: laravel
 spec:
-  replicas: 1
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+       maxSurge: 50%
+       maxUnavailable: 50%
   selector:
     matchLabels:
       app: laravel
@@ -42,6 +47,18 @@ spec:
             limits:
               memory: "500Gi"
               cpu: "500m"
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 9000
+          initialDelaySeconds: 50
+          periodSeconds: 20
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 9000
+          initialDelaySeconds: 30
+          periodSeconds: 40
           envFrom:
             - configMapRef:
                 name: laravel-config

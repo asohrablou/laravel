@@ -3,7 +3,12 @@ kind: Deployment
 metadata:
   name: nginx-deployment
 spec:
-  replicas: 1 #tells deployment to run 3 pods matching the template
+  replicas: 3 #tells deployment to run 3 pods matching the template
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+       maxSurge: 25%
+       maxUnavailable: 25%  
   selector:
     matchLabels:
       app: nginx
