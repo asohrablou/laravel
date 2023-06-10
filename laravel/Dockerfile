@@ -43,14 +43,8 @@ COPY . /var/www
 COPY /php/local.ini /usr/local/etc/php/conf.d/local.ini
 # Copy existing application directory permissions
 COPY --chown=www:www . /var/www
-RUN chown -R www:www /var/www
 # Change current user to www
 USER www
-
-#
-#RUN touch /var/www/storage/logs/laravel.log
-#RUN chmod 777 /var/www/storage/
-#RUN chown -R www:www /var/www/storage
 # Expose port 9000 and start php-fpm server
 EXPOSE 9000
 CMD ["php-fpm"]
