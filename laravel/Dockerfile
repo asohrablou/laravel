@@ -1,5 +1,5 @@
 FROM php:8.1-fpm
-
+MAINTAINER a.sohrablou@gmail.com
 # Copy composer.lock and composer.json
 COPY composer.lock composer.json /var/www/
 
