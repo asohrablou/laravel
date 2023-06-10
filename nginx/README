@@ -1,0 +1,2 @@
+#docker build -t harbor.docker.com/app/nginx:0.1 .
+#docker push harbor.docker.com/app/nginx:0.1
