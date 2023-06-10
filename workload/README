@@ -1,0 +1,43 @@
+#kubectl apply -f .
+service/laravel created
+deployment.apps/laravel-deployment created
+configmap/laravel-config created
+ingress.networking.k8s.io/laravel-ingress created
+statefulset.apps/mysql-statefulset created
+persistentvolumeclaim/mysql-persistentvolumeclaim created
+service/mysql-service created
+deployment.apps/nginx-deployment created
+service/nginx-service created
+deployment.apps/redis-deployment created
+service/redis-service created
+secret/mysql-secret created
+
+
+
+---
+#kubectl get pods
+NAME                                 READY   STATUS             RESTARTS      AGE
+laravel-deployment-bc86dcb7c-h28zn   1/1     Running            0             47s
+laravel-deployment-bc86dcb7c-xw8dj   1/1     Running            0             47s
+mysql-statefulset-0                  1/1     Running            0             47s
+nginx-deployment-7668694d77-d57xt    1/1     Running            0             46s
+nginx-deployment-7668694d77-jdrjd    1/1     Running            0             46s
+nginx-deployment-7668694d77-vjgfl    1/1     Running            0             46s
+redis-deployment-86c59758f9-9t8fw    1/1     Running            0             46s
+
+---
+#kubectl set image deployment/nginx-deployment nginx=harbor.docker.com/app/nginx:0.2
+deployment.apps/nginx-deployment image updated
+
+---
+#kubectl rollout history deployment.v1.apps/nginx-deployment
+deployment.apps/nginx-deployment
+REVISION  CHANGE-CAUSE
+1         <none>
+2         <none>
+
+---
+#kubectl rollout undo deployment/nginx-deployment
+deployment.apps/nginx-deployment rolled back
+
+
