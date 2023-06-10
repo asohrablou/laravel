@@ -48,3 +48,11 @@ deployment.apps/nginx-deployment rolled back
 #kubectl scale deployments/nginx-deployment --replicas=5
 deployment.apps/nginx-deployment scaled
 
+---
+#kubectl exec laravel-deployment-bc86dcb7c-xw8dj -- php artisan key:generate
+INFO Application key set successfully.
+#kubectl exec laravel-deployment-bc86dcb7c-xw8dj -- php artisan config:cache
+INFO Application key cached successfully.
+#kubectl exec laravel-deployment-bc86dcb7c-xw8dj -- php artisan migrate --force
+Migration table created successfully.
+
