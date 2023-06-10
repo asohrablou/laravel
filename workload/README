@@ -1,3 +1,6 @@
+how to deploy, update, and scale the application
+
+---
 #kubectl apply -f .
 service/laravel created
 deployment.apps/laravel-deployment created
@@ -40,4 +43,8 @@ REVISION  CHANGE-CAUSE
 #kubectl rollout undo deployment/nginx-deployment
 deployment.apps/nginx-deployment rolled back
 
+
+---
+#kubectl scale deployments/nginx-deployment --replicas=5
+deployment.apps/nginx-deployment scaled
 
