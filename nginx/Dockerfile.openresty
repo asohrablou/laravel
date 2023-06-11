@@ -1,11 +1,16 @@
 FROM alpine:3.16.2
 MAINTAINER a.sohrablou@gmail.com
 ENV OPENRESTY_VERSION openresty-1.19.9.1
-RUN apk --update add tar openssl-dev pcre-dev zlib-dev unzip wget build-base gd-dev libreadline-dev libncurses5-dev libpcre3-dev libssl-dev perl libxslt-dev libgd-dev libgeoip-dev libxslt-dev libgd-dev libgeoip-dev && \
-    mkdir -p /tmp/src && \
-    cd /tmp/src && \    
-    wget https://openresty.org/download/${OPENRESTY_VERSION}.tar.gz && \
-    tar -zxvf ${OPENRESTY_VERSION}.tar.gz && \    
+RUN echo -e "http://nl.alpinelinux.org/alpine/v3.16/main\nhttp://nl.alpinelinux.org/alpine/v3.16/community" > /etc/apk/repositories
+RUN apk --update add openssl-dev pcre-dev zlib-dev unzip wget build-base gd-dev perl libxslt-dev libxslt-dev geoip-dev linux-pam linux-pam-dev \
+    --repository http://alpine.global.ssl.fastly.net/alpine/v3.16/community/ \
+    --repository http://alpine.global.ssl.fastly.net/alpine/v3.16/main
+ADD ngx_http_auth_pam_module-1.5.1 /tmp/src/ngx_http_auth_pam_module-1.5.1
+RUN    mkdir -p /tmp/src && \
+    cd /tmp/src && \   
+     wget http://openresty.org/download/${OPENRESTY_VERSION}.tar.gz && \
+    tar -zxvf ${OPENRESTY_VERSION}.tar.gz && \
+    cd /tmp/src/${OPENRESTY_VERSION} && \
     ./configure \
         --with-http_image_filter_module \
         --with-compat \
@@ -36,7 +41,7 @@ RUN apk --update add tar openssl-dev pcre-dev zlib-dev unzip wget build-base gd-
         --with-stream=dynamic \
         --with-stream_ssl_module \
         --with-stream_ssl_preread_module \
-
+        --add-module=/tmp/src/ngx_http_auth_pam_module-1.5.1 \
     --prefix=/etc/openresty \
         --http-log-path=/var/log/nginx/access.log \
         --error-log-path=/var/log/nginx/error.log \
@@ -49,9 +54,9 @@ RUN apk --update add tar openssl-dev pcre-dev zlib-dev unzip wget build-base gd-
     apk del build-base unzip && \
     rm -rf /tmp/src && \
     rm -rf /var/cache/apk/* && \
-    mkdir /etc/openresty/conf/conf.d
-RUN ln -sf /dev/stdout /var/log/nginx/access.log && \
+    mkdir -p /etc/openresty/nginx/conf/conf.d && \
+    ln -sf /dev/stdout /var/log/nginx/access.log && \
     ln -sf /dev/stderr /var/log/nginx/error.log
-#COPY nginx.conf /etc/openresty/conf/
-WORKDIR /etc/openresty/
+COPY nginx.conf /etc/openresty/nginx/conf/nginx.conf
+WORKDIR /etc/openresty/nginx/
 ENTRYPOINT ["openresty", "-g", "daemon off;"]
