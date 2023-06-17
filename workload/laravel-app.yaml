@@ -18,12 +18,12 @@ metadata:
   labels:
     app: laravel
 spec:
-  replicas: 2
+  replicas: 1
   strategy:
     type: RollingUpdate
     rollingUpdate:
        maxSurge: 50%
-       maxUnavailable: 50% 
+       maxUnavailable: 50%
   selector:
     matchLabels:
       app: laravel
@@ -51,18 +51,17 @@ spec:
             httpGet:
               path: /
               port: 9000
-            initialDelaySeconds: 50
-            periodSeconds: 20
+            initialDelaySeconds: 3
+            periodSeconds: 3
           livenessProbe:
             httpGet:
               path: /
               port: 9000
-            initialDelaySeconds: 30
-            periodSeconds: 40
+            initialDelaySeconds: 3
+            periodSeconds: 3
           envFrom:
             - configMapRef:
                 name: laravel-config
 
       imagePullSecrets:
             - name: harbor-registry
-
