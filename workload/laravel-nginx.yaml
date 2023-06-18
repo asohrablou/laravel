@@ -27,18 +27,21 @@ spec:
             cpu: "100m"          #cpu requested
             memory: "256Mi"      #memory requested
         livenessProbe:
-          httpGet:
-            path: /
+          failureThreshold: 3
+          initialDelaySeconds: 12
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
             port: 80
-            httpHeaders:
-          initialDelaySeconds: 3
-          periodSeconds: 3
+          timeoutSeconds: 1
         readinessProbe:
-          httpGet:
-            path: /
+          failureThreshold: 3
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
             port: 80
-          initialDelaySeconds: 3
-          periodSeconds: 3
+          timeoutSeconds: 1
       automountServiceAccountToken: true
       terminationGracePeriodSeconds: 30
       imagePullSecrets:
