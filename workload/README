@@ -54,5 +54,14 @@ INFO Application key set successfully.
 #kubectl exec laravel-deployment-bc86dcb7c-xw8dj -- php artisan config:cache
 INFO Application key cached successfully.
 #kubectl exec laravel-deployment-bc86dcb7c-xw8dj -- php artisan migrate --force
-Migration table created successfully.
+INFO  Preparing database.  
+
+  Creating migration table ........................................ 173ms DONE
+
+   INFO  Running migrations.  
+
+  2014_10_12_000000_create_users_table ............................ 141ms DONE
+  2014_10_12_100000_create_password_reset_tokens_table ............ 215ms DONE
+  2019_08_19_000000_create_failed_jobs_table ....................... 98ms DONE
+  2019_12_14_000001_create_personal_access_tokens_table ........... 143ms DONE
 
