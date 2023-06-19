@@ -42,7 +42,6 @@ spec:
           tcpSocket:
             port: 80
           timeoutSeconds: 1
-      automountServiceAccountToken: true
       terminationGracePeriodSeconds: 30
       imagePullSecrets:
             - name: harbor-registry
